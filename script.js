@@ -1,5 +1,4 @@
 const area = document.querySelector('textarea');
-/** @type { HTMLElement } */
 const blocker = document.querySelector('#blocker');
 const killTimerLabel = document.querySelector('#kill-timer');
 const objectiveTimerLabel = document.querySelector('#objective-timer');
@@ -132,8 +131,6 @@ function updateTimerValue(timer) {
 }
 
 function onInput(e) {
-    // TODO: Take into account the 'isComposing' for IMEs (CJK)
-
     if (!e.isCompositing && ['deleteContentBackward', 'deleteWordBackward'].includes(e.inputType) && s.isForwardOnly) {
         area.value = currentText;
         e.preventDefault();
