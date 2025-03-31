@@ -1,0 +1,158 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    margin: 0 20%;
+    padding: 0;
+    text-align: center;
+    background: #eff1f5;
+    color: #4c4f69;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+textarea {
+    flex: 1;
+    resize: none;
+    font-size: 2rem;
+    background: #dce0e8;
+    border: none;
+    border-radius: 4px;
+    color: #414559;
+    pointer-events: none;
+    user-select: none;
+    margin-bottom: 1rem;
+    max-width: 100%;
+}
+
+#blocker {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    
+    transition: background .2s;
+}
+
+header.running + main #blocker {
+    background: rgba(210, 15, 57, var(--danger, 0));
+}
+
+textarea:focus {
+    outline: none;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+header h1 {
+    display: flex;
+    gap: .5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+header > #left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+header > #right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+header h1 > span {
+    transition: opacity .2s;
+}
+
+header.running h1 > span {
+    opacity: .2;
+}
+
+header.waiting h1 > span:last-of-type {
+    opacity: 1;
+}
+
+header.writing h1 > span:first-of-type {
+    opacity: 1;
+}
+
+header.writing #kill-timer {
+    opacity: 0;
+}
+
+header.running #settings {
+    opacity: 0;
+}
+
+header.running #objective {
+    opacity: 1;
+}
+
+header.char #objective-timer,
+header.char #objective-word-count,
+header.word #objective-timer, header.word #objective-char-count,
+header.time #objective-char-count,
+header.time #objective-word-count {
+    display: none;
+}
+
+#settings {
+    transition: opacity .2s;
+}
+
+#settings > button {
+    border: none;
+    background: none;
+    color: #ccd0da;
+    transition: color .2s;
+}
+
+#settings > button:hover {
+    color: #4c4f69;
+    cursor: pointer;
+}
+
+#kill-timer, #objective {
+    font-size: 2rem;
+    transition: opacity .2s;
+}
+
+#kill-timer {
+    flex: 1;
+    color: #d20f39;
+}
+
+#objective {
+    transition: color .2s;
+}
+
+#objective.success {
+    color: #40a02b;
+}
+
+#objective-char-count:after {
+    content: ' chars';
+    font-size: 1.2rem;
+    color: #ccd0da;
+}
+
+#objective-word-count:after {
+    content: ' words';
+    font-size: 1.2rem;
+    color: #ccd0da;
+}
