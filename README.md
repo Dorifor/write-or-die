@@ -1,6 +1,7 @@
 # 📝 or 💀
 
-The most chill writing app you'll encounter, need to write an essay ? an article ? a testament ? With this you can't miss ! It's **one shot** or **nothing** !
+The most chill writing app you'll encounter, need to write an essay ? an article ? a testament ? 
+With this you can't miss, it's **one shot** or **nothing** !
 
 You set your own rules : 
 - Write for a set period of time
