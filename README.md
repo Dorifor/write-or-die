@@ -9,5 +9,7 @@ You set your own rules :
 
 But focus ! If you don't write for just some seconds, the page disappears along with your words, no more excuses !
 
+Try it : https://dorifor.github.io/write-or-die/
+
 # 📷 Screenshots
 ![image](https://github.com/user-attachments/assets/6748c5fa-0211-44c0-b8c8-9cef7c16b429)
