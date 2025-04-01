@@ -1,6 +1,6 @@
 # 📝 or 💀
 
-The most chill writing app you'll encounter, need to write an essay ? an article ? a testament ?   
+The most chill writing app you'll encounter, need to write an essay ? an article ? a will ?   
 With [**write** or **die**](https://dorifor.github.io/write-or-die/) you can't miss, it's **one shot** or **nothing** !
 
 You set your own rules : 
