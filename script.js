@@ -29,7 +29,7 @@ let s = {
     isForwardOnly: false,
     killTime: 5,
     killTimeStartOffset: 1,
-    focusTime: 180, // gameMode == 'time'
+    focusTime: 10, // gameMode == 'time'
     charCountObjective: 5000, // gameMode == 'char'
     wordCountObjective: 800, // gameMode == 'word'
 };
