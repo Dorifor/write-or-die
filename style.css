@@ -45,6 +45,15 @@ header.running + main #blocker {
     background: rgba(210, 15, 57, var(--danger, 0));
 }
 
+header.objective + main #blocker {
+    display: none;
+}
+
+header.objective + main textarea {
+    pointer-events: all;
+    user-select: text;
+}
+
 textarea:focus {
     outline: none;
 }
@@ -80,6 +89,7 @@ header > #right {
     align-items: center;
     justify-content: flex-end;
     gap: 1rem;
+    position: relative;
 }
 
 header h1 > span {
@@ -103,8 +113,10 @@ header.writing #kill-timer {
 }
 
 header.running #settings,
-header.running #save {
+header.running #save,
+header.running #copy {
     opacity: 0;
+    pointer-events: none;
 }
 
 header.running #objective {
@@ -122,11 +134,49 @@ header.time #objective-word-count {
 
 #settings,
 #save,
-#copy {
+#copy,
+#restart {
     border: none;
     background: none;
     color: #ccd0da;
     transition: all .2s;
+}
+
+#restart {
+    opacity: 0;
+    right: 0;
+    position: absolute;
+    padding-right: 1rem;
+    color: #7c7f93;
+    pointer-events: none;
+}
+
+#restart::before {
+    content: 'restart';
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    right: 100%;
+    width: fit-content;
+    font-size: 1.2rem;
+    color: #ccd0da;
+    word-break: keep-all;
+    white-space: preserve nowrap;
+    word-wrap: normal;
+/*     pointer-events: none; */
+    opacity: 0;
+    transition: all .2s;
+}
+
+header.objective #restart {
+    opacity: 1;
+    right: 32px;
+    pointer-events: all;
+}
+
+header.objective #restart:hover::before {
+    opacity: 1;
 }
 
 #save {
@@ -155,7 +205,8 @@ header.time #objective-word-count {
 
 #settings:enabled:hover,
 #save:enabled:hover,
-#copy:enabled:hover {
+#copy:enabled:hover,
+#restart:enabled:hover {
     color: #4c4f69;
     cursor: pointer;
 }
@@ -280,6 +331,56 @@ dialog button:hover {
     color: white;
     background: var(--color);
     cursor: pointer;
+}
+
+main .toast-container {
+    position: absolute;
+    top: 1rem;
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+main #toast {
+    padding: .5rem;
+    background: var(--color);
+    color: white;
+    border-radius: 8px;
+    pointer-events: none;
+    translate: 0 -1rem;
+    opacity: 0;
+    transition: opacity .2s,translate .3s;
+}
+
+#toast.show {
+    opacity: 1;
+    translate: 0 0;
+}
+
+#toast.objective {
+    --color: #40a02b;
+}
+
+#toast.error {
+    --color: #d20f39;
+}
+
+#toast.info {
+    --color: #7287fd;
+}
+
+footer {
+    display: flex;
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #fe640b;
 }
 
 @keyframes fade-in {

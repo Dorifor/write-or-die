@@ -11,7 +11,7 @@
 <body>
     <header>
         <div id="left">
-            <button id="save" disabled>
+            <button id="save" disabled title="Save (CTRL + S)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-download-icon lucide-download">
@@ -20,7 +20,7 @@
                     <line x1="12" x2="12" y1="15" y2="3" />
                 </svg>
             </button>
-            <button id="copy" data-clipboard-target="textarea">
+            <button id="copy" data-clipboard-target="textarea" title="Copy (CTRL + C)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-clipboard-icon lucide-clipboard">
@@ -37,7 +37,7 @@
         <h1><span>📝</span><span>or</span><span>💀</span></h1>
         <section id="right">
             <span id="kill-timer">00:00</span>
-            <button id="settings">
+            <button id="settings" title="Settings">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-settings-icon lucide-settings">
@@ -46,13 +46,31 @@
                     <circle cx="12" cy="12" r="3" />
                 </svg>
             </button>
+            <button id="restart" title="Restart">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-list-restart-icon lucide-list-restart">
+                    <path d="M21 6H3" />
+                    <path d="M7 12H3" />
+                    <path d="M7 18H3" />
+                    <path d="M12 18a5 5 0 0 0 9-3 4.5 4.5 0 0 0-4.5-4.5c-1.33 0-2.54.54-3.41 1.41L11 14" />
+                    <path d="M11 10v4h4" />
+                </svg>
+            </button>
         </section>
     </header>
 
     <main>
+        <div class="toast-container">
+            <span id="toast">Copied to clipboard</span>
+        </div>
         <textarea autocorrect="off" spellcheck="false"></textarea>
         <div id="blocker"></div>
     </main>
+
+    <footer>
+        <span>Made in 🇫🇷 by <a target="_blank" href="https://github.com/Dorifor">Mao</a></span>
+    </footer>
 
     <dialog id="settings-dialog" class="time">
         <h3>Settings</h3>

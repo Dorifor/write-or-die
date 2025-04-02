@@ -2,6 +2,7 @@
 const header = document.querySelector('header');
 const area = document.querySelector('textarea');
 const blocker = document.querySelector('#blocker');
+const toast = document.querySelector('#toast');
 const killTimerLabel = document.querySelector('#kill-timer');
 const objectiveTimerLabel = document.querySelector('#objective-timer');
 const objectiveCharLabel = document.querySelector('#objective-char-count');
@@ -11,6 +12,7 @@ const saveButton = document.querySelector('#save');
 const copyButton = document.querySelector('#copy');
 const settingsButton = document.querySelector('#settings');
 const settingsDialog = document.querySelector('#settings-dialog');
+const restartButton = document.querySelector('#restart');
 
 // Settings
 const gameModeInput = document.querySelector('#game-mode');
@@ -58,6 +60,8 @@ let session = {
     objectiveReached: false
 };
 
+let toastTimeout;
+
 document.addEventListener('keydown', () => area.focus());
 document.addEventListener('contextmenu', e => e.preventDefault())
 
@@ -71,6 +75,7 @@ settingsButton.addEventListener('click', openSettings);
 gameModeInput.addEventListener('change', updateSettingsDialogGameMode);
 settingsCancelButton.addEventListener('click', closeSettings);
 settingsApplyButton.addEventListener('click', applySettings);
+restartButton.addEventListener('click', restartSession);
 
 function updateSettingsDialogGameMode() {
     settingsDialog.classList.remove('time');
@@ -95,24 +100,44 @@ function closeDialog(dialog) {
     }, 200);
 }
 
+function areaHasSelectedText() {
+    return area. Math.abs(area.selectionEnd - area.selectionStart) > 0;
+}
+
 function blockUserActions(e) {
     const isSaveAction = e.ctrlKey && e.key == 's';
-    if (session.objectiveReached && isSaveAction)
+    if (session.objectiveReached && isSaveAction) {
+        e.preventDefault();
         downloadText();
+    }
 
     const isCopyAction = e.ctrlKey && e.key == 'c';
     if (session.objectiveReached && isCopyAction)
-        copyText();
-
-    const isCTRLAction = e.ctrlKey && 'cvxspwuaz'.indexOf(e.key) !== -1;
-    const isNavigation = ['arrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'End', 'Home', 'PageDown', 'PageUp'].includes(e.key);
-    if (isCTRLAction || (s.isForwardOnly && isNavigation)) {
+    {
         e.preventDefault();
+        copyText();
+    }
+
+    const isRestartAction = e.ctrlKey && e.key == 'r';
+    if (session.objectiveReached && isRestartAction)
+    {
+        e.preventDefault();
+        restartSession();
     }
 
     if (e.key == "Tab") {
         e.preventDefault();
         area.value += '  '; // make this config ?
+        session.lastChar = ' ';
+    }
+
+    if (session.objectiveReached)
+        return;
+
+    const isCTRLAction = e.ctrlKey && 'cvxspwuaz'.indexOf(e.key) !== -1;
+    const isNavigation = ['arrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'End', 'Home', 'PageDown', 'PageUp'].includes(e.key);
+    if (isCTRLAction || (s.isForwardOnly && isNavigation)) {
+        e.preventDefault();
     }
 }
 
@@ -156,16 +181,26 @@ function saveSettings() {
     localStorage.setItem('settings', JSON.stringify(s));
 }
 
-function updateCharObjective() {
-    session.charCount++;
+function updateCharObjective(reset = false) {
+    if (!reset)
+        session.charCount++;
     objectiveCharLabel.textContent = `${session.charCount}/${s.charCountObjective}`;
+
+    if (s.gameMode == 'char' && session.charCount == Math.floor(s.charCountObjective / 2))
+        showToast('info', 'You\'re halfway done!');
+
     if (s.gameMode == 'char' && session.charCount == s.charCountObjective)
         onObjectiveReached();
 }
 
-function updateWordObjective() {
-    session.wordCount++;
+function updateWordObjective(reset = false) {
+    if (!reset)
+        session.wordCount++;
     objectiveWordLabel.textContent = `${session.wordCount}/${s.wordCountObjective}`;
+    
+    if (s.gameMode == 'word' && session.wordCount == Math.floor(s.wordCountObjective / 2))
+        showToast('info', 'You\'re halfway done!');
+    
     if (s.gameMode == 'word' && session.wordCount == s.wordCountObjective)
         onObjectiveReached();
 }
@@ -231,7 +266,7 @@ function updateTimerValue(timer) {
 }
 
 function onInput(e) {
-    if (!e.isCompositing && ['deleteContentBackward', 'deleteWordBackward'].includes(e.inputType) && s.isForwardOnly) {
+    if (!e.isCompositing && ['deleteContentBackward', 'deleteWordBackward'].includes(e.inputType) && s.isForwardOnly && session.running) {
         area.value = currentText;
         e.preventDefault();
         return;
@@ -239,6 +274,9 @@ function onInput(e) {
 
     currentText = area.value;
     session.lastInputTime = Date.now();
+    if (killTimer.seconds < 3)
+        showToast('info', 'That was close!');
+
     resetKillTimer();
     updateTimerLabel(killTimerLabel, killTimer);
 
@@ -248,7 +286,7 @@ function onInput(e) {
     if (!e.isCompositing)
         updateCharObjective();
 
-    if (e.data == ' ' && ![' ', '', null, undefined].includes(session.lastChar))
+    if (![' ', '', null, undefined].includes(e.data) && [' ', '', null, undefined].includes(session.lastChar))
         updateWordObjective();
 
     updateBlockerDanger(0);
@@ -262,6 +300,7 @@ function onTimerTimeout(timer) {
         updateTimerLabel(killTimerLabel, killTimer);
         currentText = '';
         area.value = '';
+        showToast('error', 'You died 💀');
         finishSession();
     } else {
         onObjectiveReached();
@@ -272,10 +311,12 @@ function onObjectiveReached() {
     session.objectiveReached = true;
     objectiveContainer.classList.add('success');
     header.classList.remove('running');
+    header.classList.add('objective');
     session.running = false;
     updateBlockerDanger(0);
     resetKillTimer();
     saveButton.disabled = false;
+    showToast('objective', 'Good job!');
 }
 
 function downloadText() {
@@ -295,10 +336,48 @@ function downloadText() {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
+    showToast('info', 'Downloaded');
 }
 
 function copyText() {
     copyButton.click();
+    showToast('info', 'Copied to Clipboard');
+}
+
+function showToast(type, text, duration = 2000) {
+    toast.classList.add('show');
+    toast.classList.remove('objective');
+    toast.classList.remove('error');
+    toast.classList.remove('info');
+    toast.classList.add(type);
+    toast.textContent = text;
+
+    if (toastTimeout)
+        clearTimeout(toastTimeout);
+
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, duration);
+}
+
+function resetSession() {
+    session.charCount = 0;
+    session.objectiveReached = false;
+    session.wordCount = 0;
+    resetObjectiveTimer();
+    updateTimerLabel(objectiveTimerLabel, objectiveTimer);
+    updateCharObjective(true);
+    updateWordObjective(true);
+    saveButton.disabled = true;
+}
+
+function restartSession() {
+    applySettings();
+    resetSession();
+    session.objectiveReached = false;
+    header.classList.remove('objective');
+    objectiveContainer.classList.remove('success');
+    area.setSelectionRange(area.textLength, area.textLength);
 }
 
 function startSession() {
@@ -308,6 +387,7 @@ function startSession() {
 
     header.classList.add('running');
     objectiveContainer.classList.remove('success');
+    showToast('info', 'Keep up!');
 }
 
 function updateBlockerDanger(danger) {
@@ -320,6 +400,9 @@ function tick() {
     if (s.gameMode == 'time') {
         updateTimerValue(objectiveTimer);
         updateTimerLabel(objectiveTimerLabel, objectiveTimer);
+        const minutesPassed = objectiveTimer.hours * 60 + objectiveTimer.minutes + objectiveTimer.seconds / 60;
+        if (minutesPassed == s.focusTime / 2)
+            showToast('info', 'You\'re halfway done!')
     }
 
     if (killTimer.seconds <= 5) {
@@ -371,4 +454,8 @@ area.value = '';
 area.focus();
 updateTimerLabel(killTimerLabel, killTimer);
 
-new ClipboardJS('#copy');
+const clipboard = new ClipboardJS('#copy');
+clipboard.on('success', e => {
+    e.clearSelection();
+    area.setSelectionRange(area.textLength, area.textLength);
+});
