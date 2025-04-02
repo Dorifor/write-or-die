@@ -136,6 +136,7 @@ header.time #objective-word-count {
 #save:enabled:hover + #copy {
     left: 32px;
     opacity: 1;
+    padding-left: 1rem;
 }
 
 #copy:hover {
@@ -147,7 +148,6 @@ header.time #objective-word-count {
     opacity: 0;
     left: 0;
     position: absolute;
-    padding-left: 1rem;
 }
 
 #settings:enabled:hover,
