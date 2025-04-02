@@ -29,6 +29,7 @@ textarea {
     user-select: none;
     margin-bottom: 1rem;
     max-width: 100%;
+    padding: .5rem;
 }
 
 #blocker {
@@ -36,7 +37,7 @@ textarea {
     inset: 0;
     border-radius: 4px;
     margin-bottom: 1rem;
-    
+
     transition: background .2s;
 }
 
@@ -61,11 +62,16 @@ header h1 {
     align-items: center;
 }
 
+header #objective {
+    flex: 1;
+}
+
 header > #left {
     flex: 1;
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    position: relative;
 }
 
 header > #right {
@@ -96,7 +102,8 @@ header.writing #kill-timer {
     opacity: 0;
 }
 
-header.running #settings {
+header.running #settings,
+header.running #save {
     opacity: 0;
 }
 
@@ -106,29 +113,52 @@ header.running #objective {
 
 header.char #objective-timer,
 header.char #objective-word-count,
-header.word #objective-timer, header.word #objective-char-count,
+header.word #objective-timer,
+header.word #objective-char-count,
 header.time #objective-char-count,
 header.time #objective-word-count {
     display: none;
 }
 
-#settings {
-    transition: opacity .2s;
-}
-
-#settings > button {
+#settings,
+#save,
+#copy {
     border: none;
     background: none;
     color: #ccd0da;
-    transition: color .2s;
+    transition: all .2s;
 }
 
-#settings > button:hover {
+#save {
+    z-index: 2;
+}
+
+#save:enabled:hover + #copy {
+    left: 32px;
+    opacity: 1;
+}
+
+#copy:hover {
+    left: 32px;
+    opacity: 1;
+}
+
+#copy {
+    opacity: 0;
+    left: 0;
+    position: absolute;
+    padding-left: 1rem;
+}
+
+#settings:enabled:hover,
+#save:enabled:hover,
+#copy:enabled:hover {
     color: #4c4f69;
     cursor: pointer;
 }
 
-#kill-timer, #objective {
+#kill-timer,
+#objective {
     font-size: 2rem;
     transition: opacity .2s;
 }
@@ -156,4 +186,104 @@ header.time #objective-word-count {
     content: ' words';
     font-size: 1.2rem;
     color: #ccd0da;
+}
+
+dialog {
+    box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0);
+    transition: all .2s;
+}
+
+dialog::backdrop {
+    background: none;
+}
+
+dialog[open] {
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: #eff1f5;
+   box-shadow: 0 0 0 100vw rgb(140, 143, 161, .5);
+    animation: fade-in .2s ease normal;
+}
+
+dialog.closing {
+    opacity: 0;
+    box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0);
+}
+
+dialog h3 {
+    margin: 0;
+}
+
+dialog form {
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+}
+
+dialog label {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+dialog input,
+dialog select {
+    box-sizing: border-box;
+    width: 5rem;
+    border: none;
+    border-radius: 4px;
+    padding: .2rem;
+    text-align: center;
+    background: white;
+}
+
+label:has(input[type="checkbox"]),
+input[type="checkbox"] {
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    height: 1.2rem;
+}
+
+dialog.time [for="char-objective"],
+dialog.time [for="word-objective"],
+dialog.char [for="time-objective"],
+dialog.char [for="word-objective"],
+dialog.word [for="char-objective"],
+dialog.word [for="time-objective"] {
+    display: none;
+}
+
+dialog button {
+    --color: #4c4f69;
+    border: 2px solid var(--color);
+    border-radius: 4px;
+    padding: .2rem .5rem;
+    background: none;
+    color: var(--color);
+    font-size: 1rem;
+    transition: all .2s;
+}
+
+button.apply {
+    --color: #40a02b;
+}
+
+dialog button:hover {
+    color: white;
+    background: var(--color);
+    cursor: pointer;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

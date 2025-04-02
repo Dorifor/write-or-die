@@ -1,3 +1,5 @@
+
+const header = document.querySelector('header');
 const area = document.querySelector('textarea');
 const blocker = document.querySelector('#blocker');
 const killTimerLabel = document.querySelector('#kill-timer');
@@ -5,27 +7,45 @@ const objectiveTimerLabel = document.querySelector('#objective-timer');
 const objectiveCharLabel = document.querySelector('#objective-char-count');
 const objectiveWordLabel = document.querySelector('#objective-word-count');
 const objectiveContainer = document.querySelector('#objective');
-const header = document.querySelector('header');
+const saveButton = document.querySelector('#save');
+const copyButton = document.querySelector('#copy');
+const settingsButton = document.querySelector('#settings');
+const settingsDialog = document.querySelector('#settings-dialog');
+
+// Settings
+const gameModeInput = document.querySelector('#game-mode');
+const timeObjectiveInput = document.querySelector('#time-objective');
+const charObjectiveInput = document.querySelector('#char-objective');
+const wordObjectiveInput = document.querySelector('#word-objective');
+const killTimeInput = document.querySelector('#kill-time');
+const mercyTimeInput = document.querySelector('#kill-timer-offset');
+const forwardOnlyInput = document.querySelector('#forward-only');
+const settingsCancelButton = document.querySelector('#settings-dialog button.cancel');
+const settingsApplyButton = document.querySelector('#settings-dialog button.apply');
 
 // settings
 let s = {
     gameMode: 'time', // 'time', 'word' or 'char'
-    isForwardOnly: true,
+    isForwardOnly: false,
     killTime: 5,
     killTimeStartOffset: 1,
-    focusTime: 30, // gameMode == 'time'
-    charCountObjective: 50, // gameMode == 'char'
-    wordCountObjective: 8, // gameMode == 'word'
+    focusTime: 180, // gameMode == 'time'
+    charCountObjective: 5000, // gameMode == 'char'
+    wordCountObjective: 800, // gameMode == 'word'
 };
 
 const killTimer = {
+    hours: 0,
     minutes: 0,
-    seconds: 5
+    seconds: 5,
+    showHours: false
 };
 
 const objectiveTimer = {
+    hours: 0,
     minutes: 10,
-    seconds: 0
+    seconds: 0,
+    showHours: false
 }
 
 let session = {
@@ -46,15 +66,76 @@ blocker.addEventListener('click', () => area.focus());
 area.addEventListener('input', onInput);
 area.addEventListener('keydown', blockUserActions);
 
+saveButton.addEventListener('click', downloadText);
+settingsButton.addEventListener('click', openSettings);
+gameModeInput.addEventListener('change', updateSettingsDialogGameMode);
+settingsCancelButton.addEventListener('click', closeSettings);
+settingsApplyButton.addEventListener('click', applySettings);
+
+function updateSettingsDialogGameMode() {
+    settingsDialog.classList.remove('time');
+    settingsDialog.classList.remove('char');
+    settingsDialog.classList.remove('word');
+    settingsDialog.classList.add(gameModeInput.value);
+}
+
+function openSettings() {
+    settingsDialog.showModal();
+}
+
+function closeSettings() {
+    closeDialog(settingsDialog);
+}
+
+function closeDialog(dialog) {
+    dialog.classList.add('closing');
+    setTimeout(() => {
+        dialog.close();
+        dialog.classList.remove('closing');
+    }, 200);
+}
+
 function blockUserActions(e) {
+    const isSaveAction = e.ctrlKey && e.key == 's';
+    if (session.objectiveReached && isSaveAction)
+        downloadText();
+
+    const isCopyAction = e.ctrlKey && e.key == 'c';
+    if (session.objectiveReached && isCopyAction)
+        copyText();
+
     const isCTRLAction = e.ctrlKey && 'cvxspwuaz'.indexOf(e.key) !== -1;
     const isNavigation = ['arrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'End', 'Home', 'PageDown', 'PageUp'].includes(e.key);
     if (isCTRLAction || (s.isForwardOnly && isNavigation)) {
         e.preventDefault();
     }
+
+    if (e.key == "Tab") {
+        e.preventDefault();
+        area.value += '  '; // make this config ?
+    }
+}
+
+function updateSettingsInputs(settings) {
+    gameModeInput.value = settings.gameMode;
+    forwardOnlyInput.checked = settings.isForwardOnly;
+    killTimeInput.value = settings.killTime;
+    mercyTimeInput.value = settings.killTimeStartOffset;
+    timeObjectiveInput.value = settings.focusTime;
+    charObjectiveInput.value = settings.charCountObjective;
+    wordObjectiveInput.value = settings.wordCountObjective;
+    updateSettingsDialogGameMode();
 }
 
 function applySettings() {
+    s.gameMode = gameModeInput.value;
+    s.isForwardOnly = forwardOnlyInput.checked;
+    s.killTime = killTimeInput.value;
+    s.killTimeStartOffset = mercyTimeInput.value;
+    s.focusTime = timeObjectiveInput.value;
+    s.charCountObjective = charObjectiveInput.value;
+    s.wordCountObjective = wordObjectiveInput.value;
+
     header.classList.remove('char');
     header.classList.remove('time');
     header.classList.remove('word');
@@ -67,10 +148,12 @@ function applySettings() {
     updateTimerLabel(killTimerLabel, killTimer);
     objectiveCharLabel.textContent = `${session.charCount}/${s.charCountObjective}`;
     objectiveWordLabel.textContent = `${session.wordCount}/${s.wordCountObjective}`;
+    saveSettings();
+    closeSettings();
 }
 
 function saveSettings() {
-    localStorage.setItem('settings', s);
+    localStorage.setItem('settings', JSON.stringify(s));
 }
 
 function updateCharObjective() {
@@ -90,6 +173,8 @@ function updateWordObjective() {
 function updateTimerLabel(timerLabel, timer) {
     let secondsLabel = "00";
     let minutesLabel = "00";
+    let hoursLabel = "00";
+
     if (timer.seconds < 10)
         secondsLabel = `0${timer.seconds}`;
     else
@@ -100,7 +185,14 @@ function updateTimerLabel(timerLabel, timer) {
     else
         minutesLabel = timer.minutes;
 
+    if (timer.hours < 10)
+        hoursLabel = `0${timer.hours}`;
+    else
+        hoursLabel = timer.hours;
+
     timerLabel.textContent = `${minutesLabel}:${secondsLabel}`;
+    if (timer.showHours)
+        timerLabel.textContent = hoursLabel + ':' + timerLabel.textContent;
 }
 
 function resetKillTimer() {
@@ -112,19 +204,27 @@ function resetKillTimer() {
 }
 
 function resetObjectiveTimer() {
-    objectiveTimer.minutes = Math.floor(s.focusTime / 60);
-    objectiveTimer.seconds = Math.floor(s.focusTime % 60);
+    objectiveTimer.hours = Math.floor(s.focusTime / 60)
+    objectiveTimer.minutes = Math.floor(s.focusTime % 60);
+    objectiveTimer.seconds = 0;
+
+    objectiveTimer.showHours = objectiveTimer.hours > 0;
 }
 
 function updateTimerValue(timer) {
     timer.seconds--;
     if (timer.seconds < 0) {
         timer.minutes--;
-        if (timer.minutes <= 0 && timer.seconds <= 0) {
-            timer.seconds = 0;
-            timer.minutes = 0;
-            onTimerTimeout(timer);
-            return;
+        if (timer.minutes < 0) {
+            timer.hours--;
+            if (timer.hours <= 0 && timer.minutes <= 0 && timer.seconds <= 0) {
+                timer.seconds = 0;
+                timer.minutes = 0;
+                timer.hours = 0;
+                onTimerTimeout(timer);
+                return;
+            }
+            timer.minutes = 59;
         }
         timer.seconds = 59
     }
@@ -148,7 +248,7 @@ function onInput(e) {
     if (!e.isCompositing)
         updateCharObjective();
 
-    if (e.data == ' ' && ![' ', ''].includes(session.lastChar))
+    if (e.data == ' ' && ![' ', '', null, undefined].includes(session.lastChar))
         updateWordObjective();
 
     updateBlockerDanger(0);
@@ -175,6 +275,30 @@ function onObjectiveReached() {
     session.running = false;
     updateBlockerDanger(0);
     resetKillTimer();
+    saveButton.disabled = false;
+}
+
+function downloadText() {
+    if (area.value.length <= 0) return;
+    const textFile = new File([area.value], 'write_or_die.txt', {
+        type: 'text/plain'
+    });
+
+    const url = URL.createObjectURL(textFile)
+
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', textFile.name);
+    link.setAttribute('target', '_blank');
+    link.setAttribute('parent', document.body);
+
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+}
+
+function copyText() {
+    copyButton.click();
 }
 
 function startSession() {
@@ -235,12 +359,16 @@ setInterval(() => {
     tick();
 }, 1000);
 
-settings = localStorage.getItem('settings');
-if (settings)
-    s = settings;
 
+let savedSettings = localStorage.getItem('settings');
+if (savedSettings)
+    s = JSON.parse(savedSettings);
+
+updateSettingsInputs(s);
 applySettings();
 
 area.value = '';
 area.focus();
 updateTimerLabel(killTimerLabel, killTimer);
+
+new ClipboardJS('#copy');

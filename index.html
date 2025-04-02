@@ -11,6 +11,23 @@
 <body>
     <header>
         <div id="left">
+            <button id="save">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-download-icon lucide-download">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+            </button>
+            <button id="copy" data-clipboard-target="textarea">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-clipboard-icon lucide-clipboard">
+                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                </svg>
+            </button>
             <div id="objective">
                 <span id="objective-timer">00:00</span>
                 <span id="objective-char-count">0/0</span>
@@ -20,17 +37,15 @@
         <h1><span>📝</span><span>or</span><span>💀</span></h1>
         <section id="right">
             <span id="kill-timer">00:00</span>
-            <div id="settings">
-                <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-settings-icon lucide-settings">
-                        <path
-                            d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                </button>
-            </div>
+            <button id="settings">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-settings-icon lucide-settings">
+                    <path
+                        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+            </button>
         </section>
     </header>
 
@@ -39,6 +54,43 @@
         <div id="blocker"></div>
     </main>
 
+    <dialog id="settings-dialog" class="time">
+        <h3>Settings</h3>
+        <form>
+            <label for="game-mode">Objective type
+                <select name="game-mode" id="game-mode">
+                    <option value="time" selected>Timer</option>
+                    <option value="word">Words</option>
+                    <option value="char">Characters</option>
+                </select>
+            </label>
+            <label for="time-objective">Time objective (minutes)
+                <input type="number" name="time-objective" id="time-objective" value="50" min="0">
+            </label>
+            <label for="char-objective">Characters objective
+                <input type="number" name="char-objective" id="char-objective" value="5000" min="0">
+            </label>
+            <label for="word-objective">Words objective
+                <input type="number" name="word-objective" id="word-objective" value="800" min="0">
+            </label>
+            <label for="kill-time">Kill timer (seconds)
+                <input type="number" value="5" id="kill-time" min="0">
+            </label>
+            <label for="kill-timer-offset">Kill timer mercy (seconds)
+                <input type="number" value="1" id="kill-timer-offset" min="0">
+            </label>
+            <label for="forward-only">No backspace
+                <input type="checkbox" name="forward-only" id="forward-only">
+            </label>
+        </form>
+
+        <section class="actions">
+            <button class="cancel">Cancel</button>
+            <button class="apply">Apply</button>
+        </section>
+    </dialog>
+
+    <script src="clipboard.min.js"></script>
     <script src="script.js"></script>
 </body>
 
