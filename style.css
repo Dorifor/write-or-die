@@ -40,6 +40,7 @@ textarea {
     padding: .5rem;
     font-family: 'Fira Code VF';
     font-size: 1.5rem;
+    font-variant-ligatures: none;
 }
 
 #blocker {
