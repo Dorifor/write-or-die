@@ -41,12 +41,15 @@
       align-items: start;
       pointer-events: none;
       opacity: 0;
-      transition: all .2s;
+      translate: -50% 0;
+      
+      transition: all .3s ease-in-out;
   }
   
   #settings-form.show {
       opacity: 1;
       pointer-events: all;
+      translate: 0 0;
   }
   
   textarea {
@@ -64,6 +67,7 @@
       font-family: 'Fira Code VF';
       font-size: 1.5rem;
       font-variant-ligatures: none;
+      z-index: 2;
   }
   
   #blocker {
@@ -328,6 +332,7 @@
       display: flex;
       justify-content: center;
       pointer-events: none;
+      z-index: 10;
   }
   
   main #toast {
