@@ -11,7 +11,7 @@ const objectiveContainer = document.querySelector('#objective');
 const saveButton = document.querySelector('#save');
 const copyButton = document.querySelector('#copy');
 const settingsButton = document.querySelector('#settings');
-const settingsDialog = document.querySelector('#settings-dialog');
+const settingsForm = document.querySelector('#settings-form');
 const restartButton = document.querySelector('#restart');
 
 // Settings
@@ -22,8 +22,9 @@ const wordObjectiveInput = document.querySelector('#word-objective');
 const killTimeInput = document.querySelector('#kill-time');
 const mercyTimeInput = document.querySelector('#kill-timer-offset');
 const forwardOnlyInput = document.querySelector('#forward-only');
-const settingsCancelButton = document.querySelector('#settings-dialog button.cancel');
-const settingsApplyButton = document.querySelector('#settings-dialog button.apply');
+settingsInputs = settingsForm.querySelectorAll('input');
+// const settingsCancelButton = document.querySelector('#settings-dialog button.cancel');
+// const settingsApplyButton = document.querySelector('#settings-dialog button.apply');
 
 // settings
 let s = {
@@ -71,25 +72,32 @@ area.addEventListener('input', onInput);
 area.addEventListener('keydown', blockUserActions);
 
 saveButton.addEventListener('click', downloadText);
-settingsButton.addEventListener('click', openSettings);
-gameModeInput.addEventListener('change', updateSettingsDialogGameMode);
-settingsCancelButton.addEventListener('click', closeSettings);
-settingsApplyButton.addEventListener('click', applySettings);
+settingsButton.addEventListener('click', toggleSettings);
+gameModeInput.addEventListener('change', updateSettingsGameMode);
 restartButton.addEventListener('click', restartSession);
 
-function updateSettingsDialogGameMode() {
-    settingsDialog.classList.remove('time');
-    settingsDialog.classList.remove('char');
-    settingsDialog.classList.remove('word');
-    settingsDialog.classList.add(gameModeInput.value);
+settingsInputs.forEach(input => input.addEventListener('change', applySettings));
+
+
+function updateSettingsGameMode() {
+    settingsForm.classList.remove('time');
+    settingsForm.classList.remove('char');
+    settingsForm.classList.remove('word');
+    settingsForm.classList.add(gameModeInput.value);
+    applySettings();
 }
 
-function openSettings() {
-    settingsDialog.showModal();
+function toggleSettings() {
+    settingsForm.classList.toggle('show');
+    if (settingsForm.classList.contains('show'))
+        settingsButton.classList.add('toggled');
+    else
+        settingsButton.classList.remove('toggled');
 }
 
 function closeSettings() {
-    closeDialog(settingsDialog);
+    settingsForm.classList.remove('show');
+    settingsButton.classList.remove('toggled');
 }
 
 function closeDialog(dialog) {
@@ -149,7 +157,7 @@ function updateSettingsInputs(settings) {
     timeObjectiveInput.value = settings.focusTime;
     charObjectiveInput.value = settings.charCountObjective;
     wordObjectiveInput.value = settings.wordCountObjective;
-    updateSettingsDialogGameMode();
+    updateSettingsGameMode();
 }
 
 function applySettings() {
@@ -174,7 +182,6 @@ function applySettings() {
     objectiveCharLabel.textContent = `${session.charCount}/${s.charCountObjective}`;
     objectiveWordLabel.textContent = `${session.wordCount}/${s.wordCountObjective}`;
     saveSettings();
-    closeSettings();
 }
 
 function saveSettings() {
@@ -387,7 +394,8 @@ function startSession() {
 
     header.classList.add('running');
     objectiveContainer.classList.remove('success');
-    showToast('info', 'Keep up!');
+    showToast('info', 'Go for it!');
+    closeSettings();
 }
 
 function updateBlockerDanger(danger) {

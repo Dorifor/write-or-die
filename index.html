@@ -60,19 +60,51 @@
         </section>
     </header>
 
-    <main>
-        <div class="toast-container">
-            <span id="toast">Copied to clipboard</span>
-        </div>
-        <textarea autocorrect="off" spellcheck="false"></textarea>
-        <div id="blocker"></div>
-    </main>
+    <div class="content">
+        <aside class="left"></aside>
+        <main>
+            <div class="toast-container">
+                <span id="toast">Copied to clipboard</span>
+            </div>
+            <textarea autocorrect="off" spellcheck="false"></textarea>
+            <div id="blocker"></div>
+        </main>
+        <aside class="right">
+            <form id="settings-form">
+                <label for="game-mode">Objective type
+                    <select name="game-mode" id="game-mode">
+                        <option value="time" selected>Timer</option>
+                        <option value="word">Words</option>
+                        <option value="char">Characters</option>
+                    </select>
+                </label>
+                <label for="time-objective">Time objective (min)
+                    <input type="number" name="time-objective" id="time-objective" value="50" min="0">
+                </label>
+                <label for="char-objective">Characters objective
+                    <input type="number" name="char-objective" id="char-objective" value="5000" min="0">
+                </label>
+                <label for="word-objective">Words objective
+                    <input type="number" name="word-objective" id="word-objective" value="800" min="0">
+                </label>
+                <label for="kill-time">Kill timer (sec)
+                    <input type="number" value="5" id="kill-time" min="0">
+                </label>
+                <label for="kill-timer-offset">Kill timer mercy (sec)
+                    <input type="number" value="1" id="kill-timer-offset" min="0">
+                </label>
+                <label for="forward-only">No backspace
+                    <input type="checkbox" name="forward-only" id="forward-only">
+                </label>
+            </form>
+        </aside>
+    </div>
 
     <footer>
         <span>Made in 🇫🇷 by <a target="_blank" href="https://github.com/Dorifor">Mao</a></span>
     </footer>
 
-    <dialog id="settings-dialog" class="time">
+    <!-- <dialog id="settings-dialog" class="time">
         <h3>Settings</h3>
         <form>
             <label for="game-mode">Objective type
@@ -106,7 +138,7 @@
             <button class="cancel">Cancel</button>
             <button class="apply">Apply</button>
         </section>
-    </dialog>
+    </dialog> -->
 
     <script src="clipboard.min.js"></script>
     <script src="script.js"></script>
