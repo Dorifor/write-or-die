@@ -176,6 +176,7 @@ function applySettings() {
 
     resetKillTimer();
     resetObjectiveTimer();
+    restartSession();
 
     updateTimerLabel(objectiveTimerLabel, objectiveTimer);
     updateTimerLabel(killTimerLabel, killTimer);
@@ -379,7 +380,6 @@ function resetSession() {
 }
 
 function restartSession() {
-    applySettings();
     resetSession();
     session.objectiveReached = false;
     header.classList.remove('objective');
