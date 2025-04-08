@@ -19,6 +19,10 @@ body {
     font-family: "Fira Code VF";
 }
 
+header h1 {
+    font-size: min(3vw, 2rem);
+}
+
 .content {
     display: flex;
     flex: 1;
@@ -33,6 +37,7 @@ main {
 
 .content aside {
     width: 20%;
+    transition: all .2s;
 }
 
 #settings-form {
@@ -65,7 +70,7 @@ textarea {
     max-width: 100%;
     padding: .5rem;
     font-family: 'Fira Code VF';
-    font-size: 1.5rem;
+    font-size: min(3vw, 1.5rem);
     font-variant-ligatures: none;
     z-index: 2;
 }
@@ -252,7 +257,7 @@ header.objective #restart:hover::before {
 
 #kill-timer,
 #objective {
-    font-size: 2rem;
+    font-size: min(3vw, 2rem);
     transition: opacity .2s;
 }
 
@@ -382,5 +387,31 @@ a {
 
     to {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .content aside {
+        width: 5%;
+    }
+
+    #settings-form {
+        display: none;
+    }
+
+    #settings-form.show {
+        display: flex;
+    }
+
+    .content:has(#settings-form.show) .left {
+        width: 0;
+    }
+
+    .right:has(#settings-form.show) {
+        width: 40%;
+    }
+
+    header {
+        margin: 0 5%;
     }
 }
