@@ -63,7 +63,7 @@ let session = {
 
 let toastTimeout;
 
-document.addEventListener('keydown', () => area.focus());
+// document.addEventListener('keydown', () => area.focus());
 document.addEventListener('contextmenu', e => e.preventDefault())
 
 blocker.addEventListener('click', () => area.focus());
