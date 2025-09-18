@@ -8,9 +8,14 @@ You set your own rules :
 - Write a set number of words
 - Write a set number of characters
 
-But focus ! If you don't write for just some seconds, the page disappears along with your words, no more excuses !
+But focus ! If you don't write for a while, the page disappears along with your words, no more excuses !
 
 Try it : https://dorifor.github.io/write-or-die/
 
 # 📷 Screenshots
-![image](https://github.com/user-attachments/assets/6748c5fa-0211-44c0-b8c8-9cef7c16b429)
+https://github.com/user-attachments/assets/4562fb82-fbfc-4924-af64-c147879f822b
+
+https://github.com/user-attachments/assets/b8a742dc-d8c9-4608-8a2c-0d2e1aa48d69
+
+https://github.com/user-attachments/assets/21862da1-43b2-4ad6-b571-2f07f5c8956d
+
